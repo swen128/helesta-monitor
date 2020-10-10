@@ -19,21 +19,37 @@ const serverlessConfiguration: Serverless = {
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
-    apiGateway: {
-      minimumCompressionSize: 1024,
-    },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
     },
   },
   functions: {
-    hello: {
-      handler: 'handler.hello',
+    playlistWatcher: {
+      handler: 'src/handler.playlistWatcher',
       events: [
         {
-          http: {
-            method: 'get',
-            path: 'hello',
+          schedule: {
+            rate: "rate(10 minutes)"
+          }
+        }
+      ]
+    },
+    subscriberWatcher: {
+      handler: 'src/handler.subscriberWatcher',
+      events: [
+        {
+          schedule: {
+            rate: "rate(10 minutes)"
+          }
+        }
+      ]
+    },
+    mentionWatcher: {
+      handler: 'src/handler.mentionWatcher',
+      events: [
+        {
+          stream: {
+            arn: "arn:aws:dynamodb:us-east-2:934162718050:table/Videos-prod/stream/2019-07-08T02:52:33.221"
           }
         }
       ]
