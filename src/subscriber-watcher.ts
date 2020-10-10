@@ -19,17 +19,17 @@ export class SubscriberWatcher {
     const n = await this.youtubeClient.fetchSubscriberCountOfChannel(this.channelId)
 
     if (isMultipleOf(n, this.subscriberCountFactor)) {
-      const mes = message(n)
-      await this.twitterClient.tweet(mes)
-      return [mes]
+      const message = this.notificationMessage(n)
+      await this.twitterClient.tweet(message)
+      return [message]
     } else {
       return []
     }
   }
-}
 
-function message(n: number): string {
-  return `チャンネル登録者数が ${n} 人に達しました🎉`
+  notificationMessage(subscriberCount: number): string {
+    return `リゼ様のYouTubeチャンネル登録者数が "${subscriberCount.toLocaleString()}" 人に到達しました🎉`
+  }
 }
 
 function isMultipleOf(a: number, b: number): boolean {

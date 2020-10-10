@@ -19,19 +19,21 @@ export class PlaylistWatcher {
     const videos = await this.youtubeClient.fetchVideosInPlaylist(this.playlistId)
     const messages = videos
       .filter(video => isMultipleOf(video.viewCount, this.viewCountFactor))
-      .map(message)
+      .map(this.notificationMessage)
 
     for (const message of messages) {
       await this.twitterClient.tweet(message)
     }
     return messages
   }
+
+  notificationMessage = (video: YouTubeVideo) => {
+    const videoUrl = `https://youtu.be/${video.videoId}`
+    const viewCountRounded = video.viewCount - video.viewCount % this.viewCountFactor
+    return `"${video.videoTitle}" の再生回数が "${viewCountRounded.toLocaleString()}" 回に到達しました。\n(現在 ${video.viewCount.toLocaleString()} 回)\n\n${videoUrl}`
+  }
 }
 
-function message(video: YouTubeVideo): string {
-  const videoUrl = `https://youtu.be/${video.videoId}`
-  return `再生数が ${video.viewCount} 回に達しました🎉\n\n${video.videoTitle}\n${videoUrl}`
-}
 
 function isMultipleOf(a: number, b: number): boolean {
   return a % b === 0 && a !== 0

@@ -73,7 +73,7 @@ describe('MentionWatcher.notificationMessages', () => {
     }]
 
     const messages = await new MentionWatcher(twitter, channelId).notificationMessages(videos)
-    const expected = [`${videoTitle}\n${videoUrl}`]
+    const expected = [`"${videoTitle}" にリゼ様が出演予定です\n#リゼ・ヘルエスタ\n\n${videoUrl}`]
 
     expect(messages).toEqual(expected)
   })
@@ -84,7 +84,7 @@ describe('MentionWatcher.notificationMessages', () => {
     const channelId = 'channel_id'
 
     const videos = [{
-      url: videoTitle,
+      url: videoUrl,
       title: videoTitle,
       channel_url: "https://www.youtube.com/channel/UCHVXbQzkl3rDfsXWo8xi2qw",
       channel_title: "channel title",

@@ -5,14 +5,6 @@ import {Marshaller} from '@aws/dynamodb-auto-marshaller';
 
 const marshaller = new Marshaller()
 
-interface YouTubeVideoInDynamoDb {
-  url: { S: string }
-  title: { S: string }
-  channel_url: { S: string }
-  channel_title: { S: string }
-  description: { S: string }
-}
-
 interface YouTubeVideo {
   url: string
   title: string
@@ -43,6 +35,6 @@ export class MentionWatcher {
   notificationMessages(videos: YouTubeVideo[]): string[] {
     return videos
       .filter(video => video.description.includes(this.channelId))
-      .map(video => `${video.title}\n${video.url}`)
+      .map(video => `"${video.title}" にリゼ様が出演予定です\n#リゼ・ヘルエスタ\n\n${video.url}`)
   }
 }

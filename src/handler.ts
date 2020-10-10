@@ -12,7 +12,7 @@ const youtubeApiKey = process.env.YOUTUBE_API_KEY ?? ''
 const twitterApiKey = process.env.TWITTER_API_KEY ?? ''
 const twitterApiSecret = process.env.TWITTER_API_SECRET ?? ''
 const twitterAccessToken = process.env.TWITTER_ACCESS_TOKEN ?? ''
-const twitterAccessSecret = process.env.TWITTER_ACCESS_SECRET ?? ''
+const twitterAccessSecret = process.env.TWITTER_ACCESS_TOKEN_SECRET ?? ''
 
 const channelId = process.env.YOUTUBE_CHANNEL_ID ?? ''
 const playlistId = process.env.YOUTUBE_PLAYLIST_ID ?? ''

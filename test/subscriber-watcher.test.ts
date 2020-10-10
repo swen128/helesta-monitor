@@ -41,7 +41,7 @@ describe('SubscriberWatcher.notify', () => {
   it('should return correct tweet messages', async () => {
     const channelId = '100k_sub'
     const messages = await new SubscriberWatcher(youtube, twitter, subscriberCountFactor, channelId).notify()
-    const expected = ['チャンネル登録者数が 100000 人に達しました🎉']
+    const expected = ['リゼ様のYouTubeチャンネル登録者数が "100,000" 人に到達しました🎉']
 
     expect(messages).toEqual(expected)
   })
@@ -49,7 +49,7 @@ describe('SubscriberWatcher.notify', () => {
   it('should return correct tweet messages', async () => {
     const channelId = '1M_sub'
     const messages = await new SubscriberWatcher(youtube, twitter, subscriberCountFactor, channelId).notify()
-    const expected = ['チャンネル登録者数が 1000000 人に達しました🎉']
+    const expected = ['リゼ様のYouTubeチャンネル登録者数が "1,000,000" 人に到達しました🎉']
 
     expect(messages).toEqual(expected)
   })

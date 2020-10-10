@@ -34,8 +34,8 @@ describe('PlaylistWatcher.notify', () => {
   it('should return correct tweet messages', async () => {
     const messages = await new PlaylistWatcher(youtube, twitter, viewCountFactor, playlistId).notify()
     const expected = [
-      '再生数が 100000 回に達しました🎉\n\nvideo with 100k views\nhttps://youtu.be/1',
-      '再生数が 1000000 回に達しました🎉\n\nvideo with 1M views\nhttps://youtu.be/2'
+      '"video with 100k views" の再生回数が "100,000" 回に到達しました。\n(現在 100,000 回)\n\nhttps://youtu.be/1',
+      '"video with 1M views" の再生回数が "1,000,000" 回に到達しました。\n(現在 1,000,000 回)\n\nhttps://youtu.be/2'
     ]
 
     expect(messages.sort()).toEqual(expected.sort())
