@@ -1,11 +1,14 @@
+import {Context, ScheduledEvent} from "aws-lambda";
+
 import {YouTubeApiClientInterface, YouTubeVideo} from "./youtube-api-client";
 import {TwitterClientInterface} from "./twitter-client";
-import {Context, ScheduledEvent} from "aws-lambda";
+import {DynamoDbClient} from "./dynamodb-client";
 
 export class PlaylistWatcher {
   constructor(
     private readonly youtubeClient: YouTubeApiClientInterface,
     private readonly twitterClient: TwitterClientInterface,
+    private readonly dynamoDbClient: DynamoDbClient,
     private readonly viewCountFactor: number,
     private readonly playlistId: string,
   ) {
@@ -17,12 +20,26 @@ export class PlaylistWatcher {
 
   async notify(): Promise<string[]> {
     const videos = await this.youtubeClient.fetchVideosInPlaylist(this.playlistId)
-    const messages = videos
-      .filter(video => isMultipleOf(video.viewCount, this.viewCountFactor))
-      .map(this.notificationMessage)
+    const messages = []
 
-    for (const message of messages) {
-      await this.twitterClient.tweet(message)
+    for (const video of videos) {
+      const videoUrl = `https://youtu.be/${video.videoId}`
+      const lastMilestone = await this.dynamoDbClient.getLastMilestone(videoUrl)
+      const newMilestone = {
+        url: videoUrl,
+        count: video.viewCount - video.viewCount % this.viewCountFactor,
+        achievedDate: new Date(),
+      }
+
+      if (lastMilestone === undefined) {
+        await this.dynamoDbClient.saveMilestone(newMilestone)
+      } else if (newMilestone.count > lastMilestone.count) {
+        const message = this.notificationMessage(video)
+        messages.push(message)
+
+        await this.twitterClient.tweet(message)
+        await this.dynamoDbClient.saveMilestone(newMilestone)
+      }
     }
     return messages
   }
@@ -32,9 +49,4 @@ export class PlaylistWatcher {
     const viewCountRounded = video.viewCount - video.viewCount % this.viewCountFactor
     return `"${video.videoTitle}" の再生回数が "${viewCountRounded.toLocaleString()}" 回に到達しました。\n(現在 ${video.viewCount.toLocaleString()} 回)\n\n${videoUrl}`
   }
-}
-
-
-function isMultipleOf(a: number, b: number): boolean {
-  return a % b === 0 && a !== 0
 }

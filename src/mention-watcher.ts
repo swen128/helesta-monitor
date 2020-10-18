@@ -1,7 +1,7 @@
-import {TwitterClientInterface} from "./twitter-client";
 import {Context, DynamoDBStreamEvent} from "aws-lambda";
-
 import {Marshaller} from '@aws/dynamodb-auto-marshaller';
+
+import {TwitterClientInterface} from "./twitter-client";
 
 const marshaller = new Marshaller()
 
