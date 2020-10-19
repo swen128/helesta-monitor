@@ -42,20 +42,26 @@ functions:
   mentionWatcher:
     handler: src/handler.mentionWatcher
     events:
-      stream:
-        type: dynamodb
-        arn: ${param:DYNAMO_VIDEO_TABLE_ARN}
+      - stream:
+          type: dynamodb
+          arn: ${param:DYNAMO_VIDEO_TABLE_ARN}
 
 resources:
-  MilestoneTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: ${param:DYNAMO_MILESTONE_TABLE_NAME}
-      KeySchema:
-        - AttributeName: url
-          KeyType: HASH
-        - AttributeName: count
-          KeyType: RANGE
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+  Resources:
+    MilestoneTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${param:DYNAMO_MILESTONE_TABLE_NAME}
+        KeySchema:
+          - AttributeName: url
+            KeyType: HASH
+          - AttributeName: count
+            KeyType: RANGE
+        AttributeDefinitions:
+          - AttributeName: url
+            AttributeType: S
+          - AttributeName: count
+            AttributeType: N
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
