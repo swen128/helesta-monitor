@@ -5,7 +5,6 @@ service:
 app: helesta-monitor
 org: pandy
 
-frameworkVersion: 2
 custom:
   webpack:
     webpackConfig: './webpack.config.js'
