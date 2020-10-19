@@ -28,10 +28,17 @@ export class YouTubeApiClient implements YouTubeApiClientInterface {
     })
     const items = response.data.items
 
-    if (items.length === 0) {
+    if (!items || items.length === 0) {
       throw new Error(`No YouTube channel found for the ID: ${channelId}`)
     }
-    return parseInt(items[0].statistics.subscriberCount)
+
+    const count = items[0].statistics?.subscriberCount
+
+    if (count == undefined) {
+      throw new Error(`The YouTube Data API (Channels:list) returned unexpected format.
+       It did not contain $.data.items[0].statistics.subscriberCount: ${response}`)
+    }
+    return parseInt(count)
   }
 
   async fetchVideosInPlaylist(playlistId: string): Promise<YouTubeVideo[]> {
@@ -44,7 +51,10 @@ export class YouTubeApiClient implements YouTubeApiClientInterface {
       part: ['contentDetails'],
       maxResults: 50,
     })
-    return response.data.items.map(item => item.contentDetails.videoId)
+    const items = response.data?.items ?? []
+    return items
+      .map(item => item.contentDetails?.videoId)
+      .filter(isString)
   }
 
   async fetchVideos(videoIds: string[]): Promise<YouTubeVideo[]> {
@@ -53,12 +63,16 @@ export class YouTubeApiClient implements YouTubeApiClientInterface {
       part: ['snippet', 'statistics'],
       maxResults: 50,
     })
-    return response.data.items.map(item => ({
-      videoId: item.id,
-      viewCount: parseInt(item.statistics.viewCount),
-      videoTitle: item.snippet.title
+    const items = response.data?.items ?? []
+    return items.map(item => ({
+      videoId: item.id ?? '',
+      viewCount: parseInt(item.statistics?.viewCount ?? '0'),
+      videoTitle: item.snippet?.title ?? ''
     }))
   }
 }
 
 
+function isString(x: unknown): x is string {
+  return typeof x === 'string'
+}

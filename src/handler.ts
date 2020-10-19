@@ -6,6 +6,7 @@ import {YouTubeApiClient} from "./youtube-api-client";
 import {TwitterClient} from "./twitter-client";
 import {SubscriberWatcher} from "./subscriber-watcher";
 import {MentionWatcher} from "./mention-watcher";
+import {DynamoDbClient} from "./dynamodb-client";
 
 const youtubeApiKey = process.env.YOUTUBE_API_KEY ?? ''
 
@@ -17,11 +18,15 @@ const twitterAccessSecret = process.env.TWITTER_ACCESS_TOKEN_SECRET ?? ''
 const channelId = process.env.YOUTUBE_CHANNEL_ID ?? ''
 const playlistId = process.env.YOUTUBE_PLAYLIST_ID ?? ''
 
-const subscriberCountFactor = parseInt(process.env.SUBSCRIBER_COUNT_FACTOR) ?? 100000
-const viewCountFactor = parseInt(process.env.VIEW_COUNT_COUNT_FACTOR) ?? 100000
+const subscriberCountFactor = parseInt(process.env.SUBSCRIBER_COUNT_FACTOR ?? '100000')
+const viewCountFactor = parseInt(process.env.VIEW_COUNT_COUNT_FACTOR ?? '100000')
 
 const youtube = new YouTubeApiClient(youtubeApiKey)
 const twitter = new TwitterClient(twitterApiKey, twitterApiSecret, twitterAccessToken, twitterAccessSecret)
+
+const region = process.env.DYNAMO_MILESTONE_TABLE_REGION ?? 'us-east-1'
+const videoTableName = process.env.VIDEO_TABLE_NAME ?? ''
+const dynamodb = new DynamoDbClient(region, videoTableName)
 
 /**
  * This handler is scheduled at periodic intervals.
@@ -31,7 +36,7 @@ const twitter = new TwitterClient(twitterApiKey, twitterApiSecret, twitterAccess
  * @param context
  */
 export const playlistWatcher: ScheduledHandler =
-  new PlaylistWatcher(youtube, twitter, viewCountFactor, playlistId).handler
+  new PlaylistWatcher(youtube, twitter, dynamodb, viewCountFactor, playlistId).handler
 
 /**
  * This handler is scheduled at periodic intervals.
@@ -41,7 +46,7 @@ export const playlistWatcher: ScheduledHandler =
  * @param context
  */
 export const subscriberWatcher: ScheduledHandler =
-  new SubscriberWatcher(youtube, twitter, subscriberCountFactor, channelId).handler
+  new SubscriberWatcher(youtube, twitter, dynamodb, subscriberCountFactor, channelId).handler
 
 /**
  * This handler is triggered when a new YouTube video is added to DynamoDB.

@@ -92,7 +92,7 @@ describe('MentionWatcher.notificationMessages', () => {
     }]
 
     const messages = await new MentionWatcher(twitter, channelId).notificationMessages(videos)
-    const expected = []
+    const expected: string[] = []
 
     expect(messages).toEqual(expected)
   })

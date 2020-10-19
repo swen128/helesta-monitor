@@ -8,6 +8,7 @@
     "sourceMap": true,
     "target": "es2017",
     "outDir": "lib",
+    "strict": true,
     "esModuleInterop": true
   },
   "include": ["./**/*.ts"],

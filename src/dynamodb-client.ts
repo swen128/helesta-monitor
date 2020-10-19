@@ -28,7 +28,7 @@ export class DynamoDbClient {
       Limit: 1,
     })
     const response = await request.promise()
-    return response.Count > 0
+    return response.Items
       ? parse(response.Items[0])
       : undefined
   }

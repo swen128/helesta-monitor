@@ -23,7 +23,8 @@ export class MentionWatcher {
   handler = async (event: DynamoDBStreamEvent, context: Context) => {
     const newVideos = event.Records
       .filter(record => record.eventName === 'INSERT')
-      .map(record => marshaller.unmarshallItem(record.dynamodb.NewImage) as unknown as YouTubeVideo)
+      .map(record => marshaller.unmarshallItem(record.dynamodb?.NewImage ?? {}) as unknown)
+      .filter<YouTubeVideo>(isYouTubeVideo)
 
     const messages = this.notificationMessages(newVideos)
 
@@ -37,4 +38,11 @@ export class MentionWatcher {
       .filter(video => video.description.includes(this.channelId))
       .map(video => `"${video.title}" にリゼ様が出演予定です\n#リゼ・ヘルエスタ\n\n${video.url}`)
   }
+}
+
+function isYouTubeVideo(x: any): x is YouTubeVideo {
+  return typeof x === 'object' && x != null &&
+    [x.url, x.title, x.channel_url, x.channel_title, x.description].every(
+      value => typeof value === 'string'
+    )
 }
