@@ -23,7 +23,9 @@ export class DynamoDbClient {
   async getLastMilestone(url: string): Promise<Milestone | undefined> {
     const request = this.dynamodb.query({
       TableName: this.tableName,
-      KeyConditionExpression: `url = ${url}`,
+      KeyConditionExpression: `#urlKey = :urlValue`,
+      ExpressionAttributeNames: {"#urlKey": 'url'},
+      ExpressionAttributeValues: {":urlValue": {S: url}},
       ScanIndexForward: true,
       Limit: 1,
     })
