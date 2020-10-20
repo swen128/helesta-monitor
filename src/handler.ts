@@ -25,7 +25,7 @@ const youtube = new YouTubeApiClient(youtubeApiKey)
 const twitter = new TwitterClient(twitterApiKey, twitterApiSecret, twitterAccessToken, twitterAccessSecret)
 
 const region = process.env.DYNAMO_MILESTONE_TABLE_REGION ?? 'us-east-1'
-const videoTableName = process.env.VIDEO_TABLE_NAME ?? ''
+const videoTableName = process.env.DYNAMO_MILESTONE_TABLE_NAME ?? ''
 const dynamodb = new DynamoDbClient(region, videoTableName)
 
 /**
