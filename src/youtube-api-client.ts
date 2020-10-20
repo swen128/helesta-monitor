@@ -51,7 +51,12 @@ export class YouTubeApiClient implements YouTubeApiClientInterface {
       part: ['contentDetails'],
       maxResults: 50,
     })
-    const items = response.data?.items ?? []
+    const items = response.data?.items
+
+    if (!items) {
+      throw new Error(`The playlist (ID: ${playlistId}) does not exist or does not contain any videos.`)
+    }
+
     return items
       .map(item => item.contentDetails?.videoId)
       .filter(isString)

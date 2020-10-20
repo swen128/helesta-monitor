@@ -21,6 +21,8 @@ export class SubscriberWatcher {
   async notify(): Promise<string[]> {
     const count = await this.youtubeClient.fetchSubscriberCountOfChannel(this.channelId)
 
+    console.log(`Subscriber count of the channel (${this.channelId}): ${count}`)
+
     const channelUrl = `https://www.youtube.com/channel/${this.channelId}`
     const lastMilestone = await this.dynamoDbClient.getLastMilestone(channelUrl)
     const newMilestone = {

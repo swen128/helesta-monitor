@@ -15,7 +15,8 @@ export class PlaylistWatcher {
   }
 
   handler = async (event: ScheduledEvent, context: Context) => {
-    await this.notify()
+    const messages = await this.notify()
+    console.log(`Tweeted messages:\n${messages.join('\n')}`)
   }
 
   async notify(): Promise<string[]> {
@@ -23,6 +24,8 @@ export class PlaylistWatcher {
     const messages = []
 
     for (const video of videos) {
+      console.log(`view count: ${video.viewCount}, video title: ${video.videoTitle}`)
+
       const videoUrl = `https://youtu.be/${video.videoId}`
       const lastMilestone = await this.dynamoDbClient.getLastMilestone(videoUrl)
       const newMilestone = {
