@@ -29,6 +29,15 @@ provider:
     DYNAMO_MILESTONE_TABLE_NAME: ${param:DYNAMO_MILESTONE_TABLE_NAME}
     VIEW_COUNT_FACTOR: ${param:VIEW_COUNT_FACTOR}
     SUBSCRIBER_COUNT_FACTOR: ${param:SUBSCRIBER_COUNT_FACTOR}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:PutItem
+      Resource:
+        Fn::GetAtt:
+          - MilestoneTable
+          - Arn
 
 functions:
   playlistWatcher:
