@@ -19,7 +19,7 @@ const channelId = process.env.YOUTUBE_CHANNEL_ID ?? ''
 const playlistId = process.env.YOUTUBE_PLAYLIST_ID ?? ''
 
 const subscriberCountFactor = parseInt(process.env.SUBSCRIBER_COUNT_FACTOR ?? '100000')
-const viewCountFactor = parseInt(process.env.VIEW_COUNT_COUNT_FACTOR ?? '100000')
+const viewCountFactor = parseInt(process.env.VIEW_COUNT_FACTOR ?? '100000')
 
 const youtube = new YouTubeApiClient(youtubeApiKey)
 const twitter = new TwitterClient(twitterApiKey, twitterApiSecret, twitterAccessToken, twitterAccessSecret)
