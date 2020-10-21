@@ -21,12 +21,12 @@ export class YoutubeApiClientMock implements YouTubeApiClientInterface {
       {
         videoId: '1',
         videoTitle: 'video with 100k views',
-        viewCount: 100000,
+        viewCount: 102434,
       },
       {
         videoId: '2',
         videoTitle: 'video with 1M views',
-        viewCount: 1000000,
+        viewCount: 1012434,
       },
       {
         videoId: '3',
