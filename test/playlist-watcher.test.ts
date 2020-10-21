@@ -43,6 +43,8 @@ describe("PlaylistWatcher.handler", () => {
 
   it("should succeed", async () => {
     AWSMock.mock('DynamoDB', 'query', (params: QueryInput, callback: Function) => {
+      expect(params.ScanIndexForward).toBeFalsy()
+      
       callback(null, {
         Items: [{
           url: {'S': 'https://youtu.be/videoId'},

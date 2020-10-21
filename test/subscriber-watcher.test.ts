@@ -42,6 +42,8 @@ describe("SubscriberWatcher.handler", () => {
 
   it("should succeed", async () => {
     AWSMock.mock('DynamoDB', 'query', (params: QueryInput, callback: Function) => {
+      expect(params.ScanIndexForward).toBeFalsy()
+
       callback(null, {
         Items: [{
           url: {'S': 'https://www.youtube.com/channel/UCZ1xuCK1kNmn5RzPYIZop3w'},

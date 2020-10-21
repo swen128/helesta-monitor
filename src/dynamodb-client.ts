@@ -23,7 +23,7 @@ export class DynamoDbClient {
       KeyConditionExpression: `#urlKey = :urlValue`,
       ExpressionAttributeNames: {"#urlKey": 'url'},
       ExpressionAttributeValues: {":urlValue": {S: url}},
-      ScanIndexForward: true,
+      ScanIndexForward: false,
       Limit: 1,
     })
     const response = await request.promise()
