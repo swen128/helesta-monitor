@@ -7,7 +7,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@aws/dynamodb-auto-marshaller": "^0.7.1",
     "aws-sdk": "^2.773.0",
     "googleapis": "^61.0.0",
     "source-map-support": "^0.5.10",

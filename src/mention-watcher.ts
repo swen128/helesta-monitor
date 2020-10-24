@@ -1,9 +1,7 @@
 import {Context, DynamoDBStreamEvent} from "aws-lambda";
-import {Marshaller} from '@aws/dynamodb-auto-marshaller';
+import {Converter} from "aws-sdk/clients/dynamodb";
 
 import {TwitterClientInterface} from "./twitter-client";
-
-const marshaller = new Marshaller()
 
 interface YouTubeVideo {
   url: string
@@ -23,7 +21,7 @@ export class MentionWatcher {
   handler = async (event: DynamoDBStreamEvent, context: Context) => {
     const newVideos = event.Records
       .filter(record => record.eventName === 'INSERT')
-      .map(record => marshaller.unmarshallItem(record.dynamodb?.NewImage ?? {}) as unknown)
+      .map(record => Converter.unmarshall(record.dynamodb?.NewImage ?? {}) as unknown)
       .filter<YouTubeVideo>(isYouTubeVideo)
 
     const messages = this.notificationMessages(newVideos)
