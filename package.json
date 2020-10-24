@@ -10,6 +10,7 @@
     "aws-sdk": "^2.773.0",
     "googleapis": "^61.0.0",
     "source-map-support": "^0.5.10",
+    "ts-dedent": "^2.0.0",
     "twitter-api-client": "^1.0.2"
   },
   "devDependencies": {

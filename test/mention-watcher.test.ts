@@ -73,7 +73,9 @@ describe('MentionWatcher.notificationMessages', () => {
     }]
 
     const messages = await new MentionWatcher(twitter, channelId).notificationMessages(videos)
-    const expected = [`"${videoTitle}" にリゼ様が出演予定です\n#リゼ・ヘルエスタ\n\n${videoUrl}`]
+    const expected = [
+      `【出演情報】\n次の動画にリゼ様が出演予定です\n\n${videoTitle}\n${videoUrl}\n\n#リゼ・ヘルエスタ`
+    ]
 
     expect(messages).toEqual(expected)
   })

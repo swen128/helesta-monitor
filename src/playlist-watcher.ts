@@ -1,4 +1,5 @@
 import {Context, ScheduledEvent} from "aws-lambda";
+import dedent from 'ts-dedent';
 
 import {YouTubeApiClientInterface, YouTubeVideo} from "./youtube-api-client";
 import {TwitterClientInterface} from "./twitter-client";
@@ -50,6 +51,13 @@ export class PlaylistWatcher {
   notificationMessage = (video: YouTubeVideo) => {
     const videoUrl = `https://youtu.be/${video.videoId}`
     const viewCountRounded = video.viewCount - video.viewCount % this.viewCountFactor
-    return `"${video.videoTitle}" の再生回数が "${viewCountRounded.toLocaleString()}" 回に到達しました。\n(現在 ${video.viewCount.toLocaleString()} 回)\n\n${videoUrl}`
+
+    return dedent`【再生数記念】
+                  リゼ様の動画再生数が ${viewCountRounded.toLocaleString()} 回に到達しました🎉
+                  
+                  ${video.videoTitle}
+                  ${videoUrl}
+                  
+                  #リゼ・ヘルエスタ`
   }
 }

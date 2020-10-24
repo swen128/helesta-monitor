@@ -1,5 +1,6 @@
 import {Context, DynamoDBStreamEvent} from "aws-lambda";
 import {Converter} from "aws-sdk/clients/dynamodb";
+import dedent from "ts-dedent";
 
 import {TwitterClientInterface} from "./twitter-client";
 
@@ -34,7 +35,17 @@ export class MentionWatcher {
   notificationMessages(videos: YouTubeVideo[]): string[] {
     return videos
       .filter(video => video.description.includes(this.channelId))
-      .map(video => `"${video.title}" にリゼ様が出演予定です\n#リゼ・ヘルエスタ\n\n${video.url}`)
+      .map(this.notificationMessage)
+  }
+
+  notificationMessage(video: YouTubeVideo): string {
+    return dedent`【出演情報】
+                  次の動画にリゼ様が出演予定です
+                  
+                  ${video.title}
+                  ${video.url}
+                  
+                  #リゼ・ヘルエスタ`
   }
 }
 

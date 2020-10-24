@@ -93,7 +93,7 @@ describe("PlaylistWatcher.notify", () => {
 
     const messages = await watcher.notify()
     expect(messages).toEqual([
-      '"video with 1M views" の再生回数が "1,000,000" 回に到達しました。\n(現在 1,012,434 回)\n\nhttps://youtu.be/2'
+      '【再生数記念】\nリゼ様の動画再生数が 1,000,000 回に到達しました🎉\n\nvideo with 1M views\nhttps://youtu.be/2\n\n#リゼ・ヘルエスタ'
     ])
   });
 

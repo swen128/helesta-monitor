@@ -1,4 +1,5 @@
 import {Context, ScheduledEvent} from "aws-lambda";
+import dedent from "ts-dedent";
 
 import {YouTubeApiClientInterface} from "./youtube-api-client";
 import {TwitterClientInterface} from "./twitter-client";
@@ -48,6 +49,9 @@ export class SubscriberWatcher {
   }
 
   notificationMessage(subscriberCount: number): string {
-    return `リゼ様のYouTubeチャンネル登録者数が "${subscriberCount.toLocaleString()}" 人に到達しました🎉`
+    return dedent`【チャンネル登録者数記念】
+                  ヘルエスタ王国第二皇女、リゼ様のYouTubeチャンネル登録者数が ${subscriberCount.toLocaleString()} 人に到達しました🎉
+                  
+                  #リゼ・ヘルエスタ`
   }
 }
