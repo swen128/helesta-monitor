@@ -33,8 +33,11 @@ export class MentionWatcher {
   }
 
   notificationMessages(videos: YouTubeVideo[]): string[] {
+    const channelUrl = `https://www.youtube.com/channel/${this.channelId}`
+
     return videos
       .filter(video => video.description.includes(this.channelId))
+      .filter(video => video.channel_url != channelUrl)
       .map(this.notificationMessage)
   }
 

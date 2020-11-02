@@ -98,4 +98,23 @@ describe('MentionWatcher.notificationMessages', () => {
 
     expect(messages).toEqual(expected)
   })
+
+  it('should return an empty array when a given video is posted on the specified channel', async () => {
+    const videoTitle = 'video title'
+    const videoUrl = 'https://www.youtube.com/watch?v=9r_1yLnqS-0'
+    const channelId = 'channel_id'
+
+    const videos = [{
+      url: videoUrl,
+      title: videoTitle,
+      channel_url: `https://www.youtube.com/channel/${channelId}`,
+      channel_title: "channel title",
+      description: `https://www.youtube.com/channel/${channelId}`,
+    }]
+
+    const messages = await new MentionWatcher(twitter, channelId).notificationMessages(videos)
+    const expected: string[] = []
+
+    expect(messages).toEqual(expected)
+  })
 })
