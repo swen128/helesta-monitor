@@ -11,7 +11,7 @@
     "googleapis": "^61.0.0",
     "source-map-support": "^0.5.10",
     "ts-dedent": "^2.0.0",
-    "twitter-api-client": "~1.0.7"
+    "twitter": "^1.7.1"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
@@ -19,6 +19,7 @@
     "@types/jest": "^26.0.14",
     "@types/node": "^10.12.18",
     "@types/serverless": "^1.72.5",
+    "@types/twitter": "^1.7.0",
     "aws-sdk-mock": "^5.1.0",
     "fork-ts-checker-webpack-plugin": "^3.0.1",
     "jest": "^26.5.2",
