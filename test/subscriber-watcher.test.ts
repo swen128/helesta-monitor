@@ -100,7 +100,7 @@ describe("SubscriberWatcher.notify", () => {
 
     const messages = await watcher.notify()
     expect(messages).toEqual([
-      '【チャンネル登録者数記念】\nヘルエスタ王国第二皇女、リゼ様のYouTubeチャンネル登録者数が 1,000,000 人に到達しました🎉\n\n#リゼ・ヘルエスタ'
+      '【チャンネル登録者数記念】\nヘルエスタ王国第二皇女、リゼ様のYouTubeチャンネル登録者数が 100 万人に到達しました🎉\n\n#リゼ・ヘルエスタ'
     ])
   });
 

@@ -50,7 +50,7 @@ export class SubscriberWatcher {
 
   notificationMessage(subscriberCount: number): string {
     return dedent`【チャンネル登録者数記念】
-                  ヘルエスタ王国第二皇女、リゼ様のYouTubeチャンネル登録者数が ${subscriberCount.toLocaleString()} 人に到達しました🎉
+                  ヘルエスタ王国第二皇女、リゼ様のYouTubeチャンネル登録者数が ${subscriberCount / 10000} 万人に到達しました🎉
                   
                   #リゼ・ヘルエスタ`
   }

@@ -53,7 +53,7 @@ export class PlaylistWatcher {
     const viewCountRounded = video.viewCount - video.viewCount % this.viewCountFactor
 
     return dedent`【再生数記念】
-                  リゼ様の動画再生数が ${viewCountRounded.toLocaleString()} 回に到達しました🎉
+                  リゼ様の動画再生数が ${viewCountRounded / 10000} 万回に到達しました🎉
                   
                   ${video.videoTitle}
                   ${videoUrl}
