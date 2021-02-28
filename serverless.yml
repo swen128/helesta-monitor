@@ -42,16 +42,19 @@ provider:
 functions:
   playlistWatcher:
     handler: src/handler.playlistWatcher
+    timeout: 60
     events:
       - schedule: ${param:PLAYLIST_WATCHER_SCHEDULE}
 
   subscriberWatcher:
     handler: src/handler.subscriberWatcher
+    timeout: 60
     events:
       - schedule: ${param:SUBSCRIBER_WATCHER_SCHEDULE}
 
   mentionWatcher:
     handler: src/handler.mentionWatcher
+    timeout: 60
     events:
       - stream:
           type: dynamodb
