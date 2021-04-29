@@ -4,7 +4,7 @@
   "description": "",
   "main": "handler.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "dependencies": {
     "aws-sdk": "^2.773.0",
