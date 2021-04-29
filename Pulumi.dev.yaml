@@ -1,0 +1,19 @@
+config:
+  aws:region: us-east-2
+  helesta-monitor:dynamo_video_table_arn: arn:aws:dynamodb:us-east-2:934162718050:table/Videos-prod/stream/2019-07-08T02:52:33.221
+  helesta-monitor:playlist_watcher_schedule: rate(1 minute)
+  helesta-monitor:subscriber_count_factor: "1000"
+  helesta-monitor:subscriber_watcher_schedule: rate(1 minute)
+  helesta-monitor:twitter_access_token:
+    secure: AAABACY5U3glo8BbOh7/fAT9qa4NbBD3O7D8OBYn6qz70V28Wx4awk3eAwi4ky2lFrTLeYPDIQ/T5yCMijWw9OGkqYdmCsUYe+NzbomDtCU1gQ==
+  helesta-monitor:twitter_access_token_secret:
+    secure: AAABAEAYzP8/rJwXeT6UKuyJNoGZX7d9kMmlczXpMI+FoNDuoxv9na4NoLt4kxqB9lyXpOPzKrIY/qor3eYZVzSFYaapMkTz8rUPefc=
+  helesta-monitor:twitter_api_key:
+    secure: AAABAPUz/a8imJgk5eE52uhoMYjmrStjs8tdUu7k3FSQz/+ZOTNAGZvn27X/09FbV9sl0hTR3mGm
+  helesta-monitor:twitter_api_secret:
+    secure: AAABAHyy/qOoHYfYr5CIkGk9zc4MUSCRbKTD9XIsTmt1rWP3ouBG00BJwM8qJ1tjJZHF5eLicM20go5owUl6JKA0vgXs8ZbmJJacFOhm5uUSzQ==
+  helesta-monitor:view_count_factor: "1000"
+  helesta-monitor:youtube_api_key:
+    secure: AAABAIjOYCiIlL3V/0ZDCMGb9USy3ulVMZO5GI+HWEpWYTmS5ZXB4tLmfwKH1FfYyohUfuGCMxKKf6RSXIQJNtqHdQueQAE=
+  helesta-monitor:youtube_channel_id: UCZ1xuCK1kNmn5RzPYIZop3w
+  helesta-monitor:youtube_playlist_id: PLziarN-vZTxEOL4ROWm1WISAVmBz8QAj8
