@@ -16,7 +16,11 @@ export class SubscriberWatcher {
   }
 
   handler = async (event: ScheduledEvent, context: Context) => {
-    await this.notify()
+    try {
+      await this.notify()
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   async notify(): Promise<string[]> {
