@@ -5,60 +5,9 @@ service:
 app: helesta-monitor
 org: pandy
 
-custom:
-  webpack:
-    webpackConfig: './webpack.config.js'
-    includeModules: true
-
-# Add the serverless-webpack plugin
-plugins:
-  - serverless-webpack
-
 provider:
   name: aws
   runtime: nodejs12.x
-  environment:
-    TWITTER_API_KEY: ${param:TWITTER_API_KEY}
-    TWITTER_API_SECRET: ${param:TWITTER_API_SECRET}
-    TWITTER_ACCESS_TOKEN_SECRET: ${param:TWITTER_ACCESS_TOKEN_SECRET}
-    TWITTER_ACCESS_TOKEN: ${param:TWITTER_ACCESS_TOKEN}
-    YOUTUBE_API_KEY: ${param:YOUTUBE_API_KEY}
-    YOUTUBE_CHANNEL_ID: ${param:YOUTUBE_CHANNEL_ID}
-    YOUTUBE_PLAYLIST_ID: ${param:YOUTUBE_PLAYLIST_ID}
-    DYNAMO_MILESTONE_TABLE_REGION: us-east-2
-    DYNAMO_MILESTONE_TABLE_NAME: ${param:DYNAMO_MILESTONE_TABLE_NAME}
-    VIEW_COUNT_FACTOR: ${param:VIEW_COUNT_FACTOR}
-    SUBSCRIBER_COUNT_FACTOR: ${param:SUBSCRIBER_COUNT_FACTOR}
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:PutItem
-      Resource:
-        Fn::GetAtt:
-          - MilestoneTable
-          - Arn
-
-functions:
-  playlistWatcher:
-    handler: src/handler.playlistWatcher
-    timeout: 60
-    events:
-      - schedule: ${param:PLAYLIST_WATCHER_SCHEDULE}
-
-  subscriberWatcher:
-    handler: src/handler.subscriberWatcher
-    timeout: 60
-    events:
-      - schedule: ${param:SUBSCRIBER_WATCHER_SCHEDULE}
-
-  mentionWatcher:
-    handler: src/handler.mentionWatcher
-    timeout: 60
-    events:
-      - stream:
-          type: dynamodb
-          arn: ${param:DYNAMO_VIDEO_TABLE_ARN}
 
 resources:
   Resources:
