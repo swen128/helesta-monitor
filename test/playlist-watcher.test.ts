@@ -5,12 +5,11 @@ import {PutItemInput, QueryInput} from "aws-sdk/clients/dynamodb";
 
 import {DynamoDbClient} from "../src/dynamodb-client";
 import {PlaylistWatcher} from "../src/playlist-watcher";
-import {ErroneousTwitterClientMock, TwitterClientMock} from "./twitter-client.mock";
+import {TwitterClientMock} from "./twitter-client.mock";
 import {YoutubeApiClientMock} from "./youtube-api-client.mock";
 
 const youtube = new YoutubeApiClientMock()
 const twitter = new TwitterClientMock()
-const erroneousTwitter = new ErroneousTwitterClientMock()
 
 const event: ScheduledEvent = {
   version: "0",
@@ -64,29 +63,6 @@ describe("PlaylistWatcher.handler", () => {
 
     await handler(event, context)
   });
-
-  it("should run to completion even if the Twitter client gives an error", async () => {
-    AWSMock.mock('DynamoDB', 'query', (params: QueryInput, callback: Function) => {
-      expect(params.ScanIndexForward).toBeFalsy()
-
-      callback(null, {
-        Items: [{
-          url: {'S': 'https://youtu.be/videoId'},
-          achievedDate: {'S': '2020-01-01T13:00:00Z'},
-          count: {'N': 100000},
-        }]
-      });
-    })
-    AWSMock.mock('DynamoDB', 'putItem', (params: PutItemInput, callback: Function) => {
-      expect(params.TableName).toEqual(tableName)
-      callback(null);
-    })
-
-    const dynamo = new DynamoDbClient(region, tableName)
-    const handler = new PlaylistWatcher(youtube, erroneousTwitter, dynamo, viewCountFactor, playlistId).handler
-
-    await handler(event, context)
-  })
 });
 
 describe("PlaylistWatcher.notify", () => {

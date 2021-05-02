@@ -5,12 +5,11 @@ import {PutItemInput, QueryInput} from "aws-sdk/clients/dynamodb";
 
 import {DynamoDbClient} from "../src/dynamodb-client";
 import {SubscriberWatcher} from "../src/subscriber-watcher";
-import {ErroneousTwitterClientMock, TwitterClientMock} from "./twitter-client.mock";
+import {TwitterClientMock} from "./twitter-client.mock";
 import {YoutubeApiClientMock} from "./youtube-api-client.mock";
 
 const youtube = new YoutubeApiClientMock()
 const twitter = new TwitterClientMock()
-const erroneousTwitter = new ErroneousTwitterClientMock()
 
 const event: ScheduledEvent = {
   version: "0",
@@ -67,36 +66,6 @@ describe("SubscriberWatcher.handler", () => {
     const dynamo = new DynamoDbClient(region, tableName)
     const channelId = '1M_sub'
     const watcher = new SubscriberWatcher(youtube, twitter, dynamo, subscriberCountFactor, channelId)
-
-    await watcher.handler(event, context)
-  });
-
-  it("should run to completion even if the Twitter client gives an error", async () => {
-    AWSMock.mock('DynamoDB', 'query', (params: QueryInput, callback: Function) => {
-      expect(params.ScanIndexForward).toBeFalsy()
-
-      callback(null, {
-        Items: [{
-          url: {'S': 'https://www.youtube.com/channel/UCZ1xuCK1kNmn5RzPYIZop3w'},
-          achievedDate: {'S': '2020-01-01T13:00:00Z'},
-          count: {'N': 100000},
-        }]
-      });
-    })
-    AWSMock.mock('DynamoDB', 'putItem', (params: PutItemInput, callback: Function) => {
-      expect(params.TableName).toEqual(tableName)
-
-      const item = AWS.DynamoDB.Converter.unmarshall(params.Item)
-      expect(typeof item.url).toEqual("string")
-      expect(typeof item.achievedDate).toEqual("string")
-      expect(typeof item.count).toEqual("number")
-
-      callback(null);
-    })
-
-    const dynamo = new DynamoDbClient(region, tableName)
-    const channelId = '1M_sub'
-    const watcher = new SubscriberWatcher(youtube, erroneousTwitter, dynamo, subscriberCountFactor, channelId)
 
     await watcher.handler(event, context)
   });

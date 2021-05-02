@@ -16,12 +16,8 @@ export class PlaylistWatcher {
   }
 
   handler = async (event: ScheduledEvent, context: Context) => {
-    try {
-      const messages = await this.notify()
-      console.log(`Tweeted messages:\n${messages.join('\n')}`)
-    } catch (e) {
-      console.error(e)
-    }
+    const messages = await this.notify()
+    console.log(`Tweeted messages:\n${messages.join('\n')}`)
   }
 
   async notify(): Promise<string[]> {

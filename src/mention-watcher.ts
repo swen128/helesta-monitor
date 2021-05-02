@@ -20,19 +20,15 @@ export class MentionWatcher {
   }
 
   handler = async (event: DynamoDBStreamEvent, context: Context) => {
-    try {
-      const newVideos = event.Records
-        .filter(record => record.eventName === 'INSERT')
-        .map(record => Converter.unmarshall(record.dynamodb?.NewImage ?? {}) as unknown)
-        .filter<YouTubeVideo>(isYouTubeVideo)
+    const newVideos = event.Records
+      .filter(record => record.eventName === 'INSERT')
+      .map(record => Converter.unmarshall(record.dynamodb?.NewImage ?? {}) as unknown)
+      .filter<YouTubeVideo>(isYouTubeVideo)
 
-      const messages = this.notificationMessages(newVideos)
+    const messages = this.notificationMessages(newVideos)
 
-      for (const message of messages) {
-        await this.twitterClient.tweet(message)
-      }
-    } catch (e) {
-      console.error(e)
+    for (const message of messages) {
+      await this.twitterClient.tweet(message)
     }
   }
 

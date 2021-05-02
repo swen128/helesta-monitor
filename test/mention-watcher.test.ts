@@ -1,9 +1,8 @@
-import {ErroneousTwitterClientMock, TwitterClientMock} from "./twitter-client.mock";
+import {TwitterClientMock} from "./twitter-client.mock";
 import {Context, DynamoDBStreamEvent} from "aws-lambda";
 import {MentionWatcher} from "../src/mention-watcher";
 
 const twitter = new TwitterClientMock()
-const erroneousTwitter = new ErroneousTwitterClientMock()
 
 
 describe('MentionWatcher.handler', () => {
@@ -55,12 +54,6 @@ describe('MentionWatcher.handler', () => {
   it('should successfully run', async () => {
     const channelId = "arbitrary channel ID"
     const handler = new MentionWatcher(twitter, channelId).handler
-    await handler(event, context)
-  })
-
-  it("should run to completion even if the Twitter client gives an error", async () => {
-    const channelId = "UCZ1xuCK1kNmn5RzPYIZop3w"
-    const handler = new MentionWatcher(erroneousTwitter, channelId).handler
     await handler(event, context)
   })
 })
