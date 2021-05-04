@@ -47,13 +47,15 @@ describe('MentionWatcher.handler', () => {
 
   it('should successfully run', async () => {
     const channelId = "UCZ1xuCK1kNmn5RzPYIZop3w"
-    const handler = new MentionWatcher(twitter, channelId).handler
+    const channelTitle = "@リゼ・ヘルエスタ -Lize Helesta-"
+    const handler = new MentionWatcher(twitter, channelId, channelTitle).handler
     await handler(event, context)
   })
 
   it('should successfully run', async () => {
     const channelId = "arbitrary channel ID"
-    const handler = new MentionWatcher(twitter, channelId).handler
+    const channelTitle = "@リゼ・ヘルエスタ -Lize Helesta-"
+    const handler = new MentionWatcher(twitter, channelId, channelTitle).handler
     await handler(event, context)
   })
 })
@@ -63,6 +65,7 @@ describe('MentionWatcher.notificationMessages', () => {
     const videoTitle = 'video title'
     const videoUrl = 'https://www.youtube.com/watch?v=9r_1yLnqS-0'
     const channelId = 'channel_id'
+    const channelTitle = "arbitrary_channel"
 
     const videos = [{
       url: videoUrl,
@@ -72,7 +75,29 @@ describe('MentionWatcher.notificationMessages', () => {
       description: `https://www.youtube.com/channel/${channelId}`,
     }]
 
-    const messages = await new MentionWatcher(twitter, channelId).notificationMessages(videos)
+    const messages = await new MentionWatcher(twitter, channelId, channelTitle).notificationMessages(videos)
+    const expected = [
+      `【出演情報】\n次の動画にリゼ様が出演予定です\n\n${videoTitle}\n${videoUrl}\n\n#リゼ・ヘルエスタ`
+    ]
+
+    expect(messages).toEqual(expected)
+  })
+
+  it('should return correct tweet messages', async () => {
+    const videoTitle = 'video title'
+    const videoUrl = 'https://www.youtube.com/watch?v=9r_1yLnqS-0'
+    const channelId = 'channel_id'
+    const channelTitle = "channel"
+
+    const videos = [{
+      url: videoUrl,
+      title: videoTitle,
+      channel_url: "https://www.youtube.com/channel/UCHVXbQzkl3rDfsXWo8xi2qw",
+      channel_title: "channel title",
+      description: `foo bar @channel`,
+    }]
+
+    const messages = await new MentionWatcher(twitter, channelId, channelTitle).notificationMessages(videos)
     const expected = [
       `【出演情報】\n次の動画にリゼ様が出演予定です\n\n${videoTitle}\n${videoUrl}\n\n#リゼ・ヘルエスタ`
     ]
@@ -84,6 +109,7 @@ describe('MentionWatcher.notificationMessages', () => {
     const videoTitle = 'video title'
     const videoUrl = 'https://www.youtube.com/watch?v=9r_1yLnqS-0'
     const channelId = 'channel_id'
+    const channelTitle = "arbitrary_channel"
 
     const videos = [{
       url: videoUrl,
@@ -93,7 +119,7 @@ describe('MentionWatcher.notificationMessages', () => {
       description: "arbitrary description",
     }]
 
-    const messages = await new MentionWatcher(twitter, channelId).notificationMessages(videos)
+    const messages = await new MentionWatcher(twitter, channelId, channelTitle).notificationMessages(videos)
     const expected: string[] = []
 
     expect(messages).toEqual(expected)
@@ -103,6 +129,7 @@ describe('MentionWatcher.notificationMessages', () => {
     const videoTitle = 'video title'
     const videoUrl = 'https://www.youtube.com/watch?v=9r_1yLnqS-0'
     const channelId = 'channel_id'
+    const channelTitle = "arbitrary_channel"
 
     const videos = [{
       url: videoUrl,
@@ -112,7 +139,7 @@ describe('MentionWatcher.notificationMessages', () => {
       description: `https://www.youtube.com/channel/${channelId}`,
     }]
 
-    const messages = await new MentionWatcher(twitter, channelId).notificationMessages(videos)
+    const messages = await new MentionWatcher(twitter, channelId, channelTitle).notificationMessages(videos)
     const expected: string[] = []
 
     expect(messages).toEqual(expected)

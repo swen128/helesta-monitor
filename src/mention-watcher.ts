@@ -16,6 +16,7 @@ export class MentionWatcher {
   constructor(
     private readonly twitterClient: TwitterClientInterface,
     private readonly channelId: string,
+    private readonly channelTitle: string,
   ) {
   }
 
@@ -34,9 +35,13 @@ export class MentionWatcher {
 
   notificationMessages(videos: YouTubeVideo[]): string[] {
     const channelUrl = `https://www.youtube.com/channel/${this.channelId}`
+    const mention = `@${this.channelTitle}`
 
     return videos
-      .filter(video => video.description.includes(this.channelId))
+      .filter(video =>
+        video.description.includes(this.channelId) ||
+        video.description.includes(mention)
+      )
       .filter(video => video.channel_url != channelUrl)
       .map(this.notificationMessage)
   }

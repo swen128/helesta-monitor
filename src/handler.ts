@@ -16,6 +16,7 @@ const twitterAccessToken = process.env.TWITTER_ACCESS_TOKEN ?? ''
 const twitterAccessSecret = process.env.TWITTER_ACCESS_TOKEN_SECRET ?? ''
 
 const channelId = process.env.YOUTUBE_CHANNEL_ID ?? ''
+const channelTitle = process.env.YOUTUBE_CHANNEL_TITLE ?? ''
 const playlistId = process.env.YOUTUBE_PLAYLIST_ID ?? ''
 
 const subscriberCountFactor = parseInt(process.env.SUBSCRIBER_COUNT_FACTOR ?? '100000')
@@ -56,4 +57,4 @@ export const subscriberWatcher: ScheduledHandler =
  * @param context
  */
 export const mentionWatcher: DynamoDBStreamHandler =
-  new MentionWatcher(twitter, channelId).handler
+  new MentionWatcher(twitter, channelId, channelTitle).handler
