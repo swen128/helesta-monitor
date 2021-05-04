@@ -1163,7 +1163,7 @@ bl@^4.0.3:
     inherits "^2.0.4"
     readable-stream "^3.4.0"
 
-bluebird@^3.7.2:
+bluebird@^3.4.7, bluebird@^3.7.2:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.7.2.tgz#9f229c15be272454ffa973ace0dbee79a1b0c36f"
   integrity sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==
@@ -3909,6 +3909,13 @@ serialize-javascript@^5.0.1:
   integrity sha512-SaaNal9imEO737H2c05Og0/8LUXG7EnsZyMa8MzkmuHoELfT6txuj0cMqRj6zfPKnmQ1yasR4PCJc8x+M4JSPA==
   dependencies:
     randombytes "^2.1.0"
+
+serverless-prune-plugin@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/serverless-prune-plugin/-/serverless-prune-plugin-1.5.0.tgz#8c91c70d7239c449d512d757200f9eae7516ae45"
+  integrity sha512-RrDKnrrUZlnKW3Ad88NePKiFi/uWt5tmTEsdZQmHDBQDMs1M3vwB7aVhrEbehh0Yhd3iI7O21EX65nxrNDI4bQ==
+  dependencies:
+    bluebird "^3.4.7"
 
 serverless-webpack@^5.4.2:
   version "5.4.2"

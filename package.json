@@ -22,6 +22,7 @@
     "@types/twitter": "^1.7.0",
     "aws-sdk-mock": "^5.1.0",
     "jest": "^26.5.2",
+    "serverless-prune-plugin": "^1.5.0",
     "serverless-webpack": "^5.4.2",
     "ts-jest": "^26.4.1",
     "ts-loader": "^9.1.1",

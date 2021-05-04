@@ -9,9 +9,15 @@ custom:
     webpackConfig: './webpack.config.js'
     includeModules: true
 
-# Add the serverless-webpack plugin
+  # Keep only 2-most recent versions of deployment artifacts in S3 buckets.
+  # See https://github.com/claygregory/serverless-prune-plugin#automatic-pruning
+  prune:
+    automatic: true
+    number: 2
+
 plugins:
   - serverless-webpack
+  - serverless-prune-plugin
 
 provider:
   name: aws
