@@ -4,7 +4,7 @@ import {Context, ScheduledEvent} from "aws-lambda";
 import {PutItemInput, QueryInput} from "aws-sdk/clients/dynamodb";
 
 import {DynamoDbClient} from "../src/dynamodb-client";
-import {PlaylistWatcher} from "../src/playlist-watcher";
+import {handler, notify} from "../src/playlist-watcher";
 import {ErroneousTwitterClientMock, TwitterClientMock} from "./twitter-client.mock";
 import {YoutubeApiClientMock} from "./youtube-api-client.mock";
 
@@ -33,7 +33,7 @@ const tableName = 'Placeholder'
 const viewCountFactor = 100000
 const playlistId = 'placeholder'
 
-describe("PlaylistWatcher.handler", () => {
+describe("handler", () => {
   beforeEach(() => {
     AWSMock.setSDKInstance(AWS);
   })
@@ -60,9 +60,9 @@ describe("PlaylistWatcher.handler", () => {
     })
 
     const dynamo = new DynamoDbClient(region, tableName)
-    const handler = new PlaylistWatcher(youtube, twitter, dynamo, viewCountFactor, playlistId).handler
+    const f = handler(youtube, twitter, dynamo, viewCountFactor, playlistId)
 
-    await handler(event, context)
+    await f(event, context)
   });
 
   it("should run to completion even if the Twitter client gives an error", async () => {
@@ -89,7 +89,7 @@ describe("PlaylistWatcher.handler", () => {
   })
 });
 
-describe("PlaylistWatcher.notify", () => {
+describe("notify", () => {
   beforeEach(() => {
     AWSMock.setSDKInstance(AWS);
   })
@@ -113,9 +113,8 @@ describe("PlaylistWatcher.notify", () => {
     )
 
     const dynamo = new DynamoDbClient(region, tableName)
-    const watcher = new PlaylistWatcher(youtube, twitter, dynamo, viewCountFactor, playlistId)
 
-    const messages = await watcher.notify()
+    const messages = await notify(youtube, twitter, dynamo, viewCountFactor, playlistId)
     expect(messages).toEqual([
       '【再生数記念】\nリゼ様の動画再生数が 100 万回に到達しました🎉\n\nvideo with 1M views\nhttps://youtu.be/2\n\n#リゼ・ヘルエスタ'
     ])
@@ -130,9 +129,8 @@ describe("PlaylistWatcher.notify", () => {
     )
 
     const dynamo = new DynamoDbClient(region, tableName)
-    const watcher = new PlaylistWatcher(youtube, twitter, dynamo, viewCountFactor, playlistId)
 
-    const messages = await watcher.notify()
+    const messages = await notify(youtube, twitter, dynamo, viewCountFactor, playlistId)
     expect(messages).toEqual([])
   });
 })
