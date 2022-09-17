@@ -1,0 +1,5 @@
+{
+    "typescript.disableAutomaticTypeAcquisition": true,
+    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
+    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false   
+}
