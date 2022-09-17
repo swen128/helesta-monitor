@@ -4,12 +4,13 @@ import dedent from "ts-dedent";
 import {YouTubeApiClientInterface} from "./youtube-api-client";
 import {TwitterClientInterface} from "./twitter-client";
 import {DynamoDbClient} from "./dynamodb-client";
+import {MilestoneService} from "./milestone-service";
 
 export class SubscriberWatcher {
   constructor(
     private readonly youtubeClient: YouTubeApiClientInterface,
     private readonly twitterClient: TwitterClientInterface,
-    private readonly dynamoDbClient: DynamoDbClient,
+    private readonly milestoneService: MilestoneService,
     private readonly subscriberCountFactor: number,
     private readonly channelId: string,
   ) {
@@ -25,7 +26,7 @@ export class SubscriberWatcher {
     console.log(`Subscriber count of the channel (${this.channelId}): ${count}`)
 
     const channelUrl = `https://www.youtube.com/channel/${this.channelId}`
-    const lastMilestone = await this.dynamoDbClient.getLastMilestone(channelUrl)
+    const lastMilestone = await this.milestoneService.getLastMilestone(channelUrl)
     const newMilestone = {
       url: channelUrl,
       count: count - count % this.subscriberCountFactor,
@@ -33,14 +34,14 @@ export class SubscriberWatcher {
     }
 
     if (lastMilestone === undefined) {
-      await this.dynamoDbClient.saveMilestone(newMilestone)
+      await this.milestoneService.saveMilestone(newMilestone)
       return []
     }
 
     if (newMilestone.count > lastMilestone.count) {
       const message = this.notificationMessage(newMilestone.count)
       await this.twitterClient.tweet(message)
-      await this.dynamoDbClient.saveMilestone(newMilestone)
+      await this.milestoneService.saveMilestone(newMilestone)
 
       return [message]
     }

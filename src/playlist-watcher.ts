@@ -1,15 +1,15 @@
 import {Context, ScheduledEvent} from "aws-lambda";
 import dedent from 'ts-dedent';
 
-import {YouTubeApiClientInterface, YouTubeVideo} from "./youtube-api-client";
+import {MilestoneService} from "./milestone-service";
 import {TwitterClientInterface} from "./twitter-client";
-import {DynamoDbClient} from "./dynamodb-client";
+import {YouTubeApiClientInterface, YouTubeVideo} from "./youtube-api-client";
 
 export class PlaylistWatcher {
   constructor(
     private readonly youtubeClient: YouTubeApiClientInterface,
     private readonly twitterClient: TwitterClientInterface,
-    private readonly dynamoDbClient: DynamoDbClient,
+    private readonly milestoneService: MilestoneService,
     private readonly viewCountFactor: number,
     private readonly playlistId: string,
   ) {
@@ -28,7 +28,7 @@ export class PlaylistWatcher {
       console.log(`view count: ${video.viewCount}, video title: ${video.videoTitle}`)
 
       const videoUrl = `https://youtu.be/${video.videoId}`
-      const lastMilestone = await this.dynamoDbClient.getLastMilestone(videoUrl)
+      const lastMilestone = await this.milestoneService.getLastMilestone(videoUrl)
       const newMilestone = {
         url: videoUrl,
         count: video.viewCount - video.viewCount % this.viewCountFactor,
@@ -36,13 +36,13 @@ export class PlaylistWatcher {
       }
 
       if (lastMilestone === undefined) {
-        await this.dynamoDbClient.saveMilestone(newMilestone)
+        await this.milestoneService.saveMilestone(newMilestone)
       } else if (newMilestone.count > lastMilestone.count) {
         const message = this.notificationMessage(video)
         messages.push(message)
 
         await this.twitterClient.tweet(message)
-        await this.dynamoDbClient.saveMilestone(newMilestone)
+        await this.milestoneService.saveMilestone(newMilestone)
       }
     }
     return messages

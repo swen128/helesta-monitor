@@ -1,14 +1,12 @@
-import AWSMock from "aws-sdk-mock";
-import AWS from "aws-sdk";
 import {Context, ScheduledEvent} from "aws-lambda";
-import {PutItemInput, QueryInput} from "aws-sdk/clients/dynamodb";
 
-import {DynamoDbClient} from "../src/dynamodb-client";
 import {PlaylistWatcher} from "../src/playlist-watcher";
+import {YouTubeVideo} from "../src/youtube-api-client";
 import {TwitterClientMock} from "./twitter-client.mock";
 import {YoutubeApiClientMock} from "./youtube-api-client.mock";
+import {MilestoneServiceMock} from "./milestone-service.mock"
+import {Milestone} from "../src/milestone-service";
 
-const youtube = new YoutubeApiClientMock()
 const twitter = new TwitterClientMock()
 
 const event: ScheduledEvent = {
@@ -26,87 +24,83 @@ const event: ScheduledEvent = {
 }
 const context = {} as Context
 
-const region = 'placeholder-region'
-const tableName = 'Placeholder'
-
 const viewCountFactor = 100000
+const subscriberCount = 0
 const playlistId = 'placeholder'
 
 describe("PlaylistWatcher.handler", () => {
-  beforeEach(() => {
-    AWSMock.setSDKInstance(AWS);
-  })
-
-  afterEach(() => {
-    AWSMock.restore('DynamoDB')
-  })
-
   it("should succeed", async () => {
-    AWSMock.mock('DynamoDB', 'query', (params: QueryInput, callback: Function) => {
-      expect(params.ScanIndexForward).toBeFalsy()
-      
-      callback(null, {
-        Items: [{
-          url: {'S': 'https://youtu.be/videoId'},
-          achievedDate: {'S': '2020-01-01T13:00:00Z'},
-          count: {'N': 100000},
-        }]
-      });
-    })
-    AWSMock.mock('DynamoDB', 'putItem', (params: PutItemInput, callback: Function) => {
-      expect(params.TableName).toEqual(tableName)
-      callback(null);
-    })
+    const milestones: Milestone[] = [{
+      url: 'https://youtu.be/3',
+      achievedDate: new Date('2020-01-01T13:00:00Z'),
+      count: 100000,
+    }]
 
-    const dynamo = new DynamoDbClient(region, tableName)
-    const handler = new PlaylistWatcher(youtube, twitter, dynamo, viewCountFactor, playlistId).handler
+    const playlist: YouTubeVideo[] = [
+      {
+        videoId: '1',
+        videoTitle: 'video with 100k views',
+        viewCount: 102434,
+      },
+      {
+        videoId: '2',
+        videoTitle: 'video with 1M views',
+        viewCount: 1012434,
+      },
+      {
+        videoId: '3',
+        videoTitle: 'video with 110k views',
+        viewCount: 110000,
+      },
+      {
+        videoId: '4',
+        videoTitle: 'video with 0 views',
+        viewCount: 0,
+      },
+    ]
+
+    const milestoneService = new MilestoneServiceMock(milestones)
+    const youtube = new YoutubeApiClientMock(subscriberCount, playlist)
+    const handler = new PlaylistWatcher(youtube, twitter, milestoneService, viewCountFactor, playlistId).handler
 
     await handler(event, context)
   });
 });
 
 describe("PlaylistWatcher.notify", () => {
-  beforeEach(() => {
-    AWSMock.setSDKInstance(AWS);
-  })
-
-  afterEach(() => {
-    AWSMock.restore('DynamoDB')
-  })
-
   it("should return correct tweet messages", async () => {
-    AWSMock.mock('DynamoDB', 'query', (params: QueryInput, callback: Function) => {
-      callback(null, {
-        Items: [{
-          url: {'S': 'https://youtu.be/videoId'},
-          achievedDate: {'S': '2020-01-01T13:00:00Z'},
-          count: {'N': 100000},
-        }]
-      });
-    })
-    AWSMock.mock('DynamoDB', 'putItem',
-      (params: PutItemInput, callback: Function) => callback(null)
-    )
+    const milestones: Milestone[] = [{
+      url: 'https://youtu.be/videoId',
+      achievedDate: new Date('2020-01-01T13:00:00Z'),
+      count: 900000,
+    }]
+    const playlist: YouTubeVideo[] = [{
+      videoId: 'videoId',
+      videoTitle: 'video with 1M views',
+      viewCount: 1012434,
+    }]
 
-    const dynamo = new DynamoDbClient(region, tableName)
-    const watcher = new PlaylistWatcher(youtube, twitter, dynamo, viewCountFactor, playlistId)
+    const milestoneService = new MilestoneServiceMock(milestones)
+    const youtube = new YoutubeApiClientMock(subscriberCount, playlist)
+    const watcher = new PlaylistWatcher(youtube, twitter, milestoneService, viewCountFactor, playlistId)
 
     const messages = await watcher.notify()
     expect(messages).toEqual([
-      '【再生数記念】\nリゼ様の動画再生数が 100 万回に到達しました🎉\n\nvideo with 1M views\nhttps://youtu.be/2\n\n#リゼ・ヘルエスタ'
+      '【再生数記念】\nリゼ様の動画再生数が 100 万回に到達しました🎉\n\nvideo with 1M views\nhttps://youtu.be/videoId\n\n#リゼ・ヘルエスタ'
     ])
   });
 
   it("should return nothing when no milestone record is found", async () => {
-    AWSMock.mock('DynamoDB', 'query',
-      (params: QueryInput, callback: Function) => callback(null, {Items: []})
-    )
-    AWSMock.mock('DynamoDB', 'putItem',
-      (params: PutItemInput, callback: Function) => callback(null)
-    )
+    const milestones: Milestone[] = []
+    const playlist: YouTubeVideo[] = [{
+      videoId: 'videoId',
+      videoTitle: 'video with 1M views',
+      viewCount: 1012434,
+    }]
 
-    const dynamo = new DynamoDbClient(region, tableName)
-    const watcher = new PlaylistWatcher(youtube, twitter, dynamo, viewCountFactor, playlistId)
+    const milestoneService = new MilestoneServiceMock(milestones)
+    const youtube = new YoutubeApiClientMock(subscriberCount, playlist)
+    const watcher = new PlaylistWatcher(youtube, twitter, milestoneService, viewCountFactor, playlistId)
 
     const messages = await watcher.notify()
     expect(messages).toEqual([])

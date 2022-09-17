@@ -1,24 +1,21 @@
-import AWS from "aws-sdk";
+import {DynamoDBClient, QueryCommand, PutItemCommand, AttributeValue} from "@aws-sdk/client-dynamodb";
+import {marshall, unmarshall} from "@aws-sdk/util-dynamodb";
+import {MilestoneService, Milestone} from "./milestone-service"
 
-interface Milestone {
-  url: string
-  achievedDate: Date
-  count: number
-}
+type AttributeMap = Record<string, AttributeValue>
 
-export class DynamoDbClient {
-  readonly dynamodb: AWS.DynamoDB
+export class DynamoDbClient implements MilestoneService {
+  readonly dynamodb: DynamoDBClient
 
   constructor(
     private readonly region: string,
     private readonly tableName: string,
   ) {
-    AWS.config.update({region: region})
-    this.dynamodb = new AWS.DynamoDB()
+    this.dynamodb = new DynamoDBClient({region})
   }
 
   async getLastMilestone(url: string): Promise<Milestone | undefined> {
-    const request = this.dynamodb.query({
+    const request = new QueryCommand({
       TableName: this.tableName,
       KeyConditionExpression: `#urlKey = :urlValue`,
       ExpressionAttributeNames: {"#urlKey": 'url'},
@@ -26,7 +23,7 @@ export class DynamoDbClient {
       ScanIndexForward: false,
       Limit: 1,
     })
-    const response = await request.promise()
+    const response = await this.dynamodb.send(request)
     const items = response.Items
     return items != undefined && items.length > 0
       ? parse(items[0])
@@ -35,15 +32,16 @@ export class DynamoDbClient {
 
   async saveMilestone(milestone: Milestone): Promise<void> {
     const item = unparse(milestone)
-    await this.dynamodb.putItem({
+    const request = new PutItemCommand({
       TableName: this.tableName,
       Item: item,
-    }).promise()
+    })
+    await this.dynamodb.send(request)
   }
 }
 
-function parse(item: AWS.DynamoDB.AttributeMap): Milestone {
-  const i = AWS.DynamoDB.Converter.unmarshall(item)
+function parse(item: AttributeMap): Milestone {
+  const i = unmarshall(item)
 
   if (
     typeof i.url !== 'string' ||
@@ -60,11 +58,11 @@ function parse(item: AWS.DynamoDB.AttributeMap): Milestone {
   }
 }
 
-function unparse(milestone: Milestone): AWS.DynamoDB.AttributeMap {
+function unparse(milestone: Milestone): AttributeMap {
   const obj = {
     url: milestone.url,
     count: milestone.count,
     achievedDate: milestone.achievedDate.toISOString()
   }
-  return AWS.DynamoDB.Converter.marshall(obj)
+  return marshall(obj)
 }

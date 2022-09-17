@@ -1,5 +1,6 @@
 import {Context, DynamoDBStreamEvent} from "aws-lambda";
-import {Converter} from "aws-sdk/clients/dynamodb";
+import {unmarshall} from "@aws-sdk/util-dynamodb";
+import {AttributeValue} from "@aws-sdk/client-dynamodb";
 import dedent from "ts-dedent";
 
 import {TwitterClientInterface} from "./twitter-client";
@@ -23,7 +24,7 @@ export class MentionWatcher {
   handler = async (event: DynamoDBStreamEvent, context: Context) => {
     const newVideos = event.Records
       .filter(record => record.eventName === 'INSERT')
-      .map(record => Converter.unmarshall(record.dynamodb?.NewImage ?? {}) as unknown)
+      .map(record => unmarshall(record.dynamodb?.NewImage as Record<string, AttributeValue> ?? {}))
       .filter<YouTubeVideo>(isYouTubeVideo)
 
     const messages = this.notificationMessages(newVideos)

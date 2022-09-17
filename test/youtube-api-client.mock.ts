@@ -1,7 +1,14 @@
 import {YouTubeApiClientInterface, YouTubeVideo} from "../src/youtube-api-client";
 
 export class YoutubeApiClientMock implements YouTubeApiClientInterface {
+  constructor(
+    private readonly subscriberCount: number,
+    private readonly playlist: YouTubeVideo[],
+  ) {}
+
   async fetchSubscriberCountOfChannel(channelId: string): Promise<number> {
+    return this.subscriberCount
+
     switch (channelId) {
       case '100k_sub':
         return 100000
@@ -17,6 +24,8 @@ export class YoutubeApiClientMock implements YouTubeApiClientInterface {
   }
 
   async fetchVideosInPlaylist(playlistId: string): Promise<YouTubeVideo[]> {
+    return this.playlist
+
     return [
       {
         videoId: '1',
